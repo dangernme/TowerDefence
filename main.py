@@ -10,16 +10,9 @@ def main():
     screen = pg.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT))
     pg.display.set_caption("Tower Defence")
 
-    waypoints = [
-        (100,100),
-        (400,200),
-        (400,100),
-        (200,300)
-        ]
-
     world = World()
 
-    enemy = Enemy(waypoints)
+    enemy = Enemy(world.waypoints)
     enemy_group = pg.sprite.Group()
     enemy_group.add(enemy)
     run = True
@@ -37,7 +30,7 @@ def main():
         # Draw
         screen.fill((50,50,80))
         world.draw(screen)
-        pg.draw.lines(screen, (255,0,0), False, waypoints)
+        pg.draw.lines(screen, (255,0,0), False, world.waypoints)
         enemy_group.draw(screen)
         pg.display.flip()
 

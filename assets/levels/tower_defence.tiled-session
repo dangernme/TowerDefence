@@ -1,12 +1,23 @@
 {
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
     "activeFile": "",
     "expandedProjectPaths": [
     ],
     "fileStates": {
     },
+    "last.externalTilesetPath": "C:/Users/Michael/Projects/TowerDefence/assets/Tiles",
+    "map.height": 15,
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "map.width": 15,
     "openFiles": [
     ],
     "project": "tower_defence.tiled-project",
     "recentFiles": [
-    ]
+    ],
+    "tileset.lastUsedFilter": "Tiled-Kachelsatzdateien (*.tsx *.xml)"
 }

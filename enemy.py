@@ -5,16 +5,17 @@ from pygame.math import Vector2
 class Enemy(pg.sprite.Sprite):
     def __init__(self, waypoints):
         super().__init__()
+        self.angle = 0
+        self.speed = 3
         self.waypoints = waypoints
         self.pos = Vector2(self.waypoints[0])
-        self.target_waypoint = 1
-        self.speed = 2
-        self.angle = 0
         self.image = pg.image.load(r'assets\Tiles\PNG\Default size\towerDefense_tile245.png').convert_alpha()
+        self.image = pg.transform.scale_by(self.image, 1.5)
         self.original_image = self.image
         self.image = pg.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.target_waypoint = 1
         self.target = None
         self.movement = None
 

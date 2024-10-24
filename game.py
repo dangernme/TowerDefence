@@ -53,4 +53,9 @@ class Game():
         mouse_tile_y = pos[1] // c.TILE_SIZE
         mouse_tile_num = (mouse_tile_y * c.COLS) + mouse_tile_x
         if self.world.tile_map[mouse_tile_num] == 25:
-            self.turret_group.add(Turret(self.turret_image, mouse_tile_x, mouse_tile_y))
+            space_is_free = True
+            for turret in self.turret_group:
+                if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):
+                    space_is_free = False
+            if space_is_free:
+                self.turret_group.add(Turret(self.turret_image, mouse_tile_x, mouse_tile_y))

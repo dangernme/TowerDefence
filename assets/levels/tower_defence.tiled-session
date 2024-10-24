@@ -3,10 +3,21 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "level_01.tmj",
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "C:/Users/Michael/Projects/TowerDefence/assets/Tiles/tower_defence.tsx": {
+            "scaleInDock": 1
+        },
+        "level_01.tmj": {
+            "scale": 0.8371875,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 480.1791713325868,
+                "y": 480.17917133258686
+            }
+        }
     },
     "last.externalTilesetPath": "C:/Users/Michael/Projects/TowerDefence/assets/Tiles",
     "map.height": 15,
@@ -15,9 +26,11 @@
     "map.tileWidth": 64,
     "map.width": 15,
     "openFiles": [
+        "level_01.tmj"
     ],
     "project": "tower_defence.tiled-project",
     "recentFiles": [
+        "level_01.tmj"
     ],
     "tileset.lastUsedFilter": "Tiled-Kachelsatzdateien (*.tsx *.xml)"
 }

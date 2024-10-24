@@ -7,6 +7,7 @@ class World:
         with open('assets/levels/level_01.tmj', 'r', encoding='utf-8') as file:
             self.level_data = json.load(file)
         self.waypoints = []
+        self.tile_map = []
         self.process_data()
         self.start = (0, 0)
         self.process_waypoints()
@@ -18,6 +19,8 @@ class World:
                     self.waypoint_data = obj['polyline']
                     self.start_x = obj['x']
                     self.start_y = obj['y']
+            elif layers['name'] == 'ground':
+                self.tile_map = layers['data']
 
     def process_waypoints(self):
         for point in self.waypoint_data:

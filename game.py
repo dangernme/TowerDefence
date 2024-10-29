@@ -12,6 +12,7 @@ class Game():
         self.screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
         pg.display.set_caption("Tower Defence")
         self.placing_turret = False
+        self.turret_sheet = pg.image.load(r'assets\shakers\Red\Weapons\turret_01_mk1.png').convert_alpha()
         self.turret_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
@@ -72,4 +73,4 @@ class Game():
                 if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):
                     space_is_free = False
             if space_is_free:
-                self.turret_group.add(Turret(self.turret_cursor, mouse_tile_x, mouse_tile_y))
+                self.turret_group.add(Turret(self.turret_sheet, mouse_tile_x, mouse_tile_y))

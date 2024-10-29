@@ -9,7 +9,7 @@ class Enemy(pg.sprite.Sprite):
         self.speed = 3
         self.waypoints = waypoints
         self.pos = Vector2(self.waypoints[0])
-        self.image = pg.image.load(r'assets\Tiles\PNG\Default size\towerDefense_tile245.png').convert_alpha()
+        self.image = pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile245.png').convert_alpha()
         self.image = pg.transform.scale_by(self.image, 1.5)
         self.original_image = self.image
         self.image = pg.transform.rotate(self.original_image, self.angle)

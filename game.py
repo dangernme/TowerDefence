@@ -54,7 +54,7 @@ class Game():
 
             # Update
             self.enemy_group.update()
-            self.turret_group.update()
+            self.turret_group.update(self.enemy_group)
 
             # Highlight selected turret
             if self.selected_turret:

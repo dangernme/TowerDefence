@@ -18,7 +18,11 @@ class Game():
         self.selected_turret = None
 
         # Load assets
-        self.turret_sheet = pg.image.load(r'assets\shakers\Red\Weapons\turret_01_mk1.png').convert_alpha()
+        self.turret_sprite_sheets = []
+        for x in range(1, c.TURRET_LEVELS + 1):
+            self.turret_sheet = pg.image.load(rf'assets\shakers\Red\Weapons\turret_01_mk{x}.png').convert_alpha()
+            self.turret_sprite_sheets.append(self.turret_sheet)
+
         self.turret_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.turret_cursor = pg.transform.scale_by(self.turret_cursor, 0.8)
 
@@ -26,7 +30,9 @@ class Game():
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
         self.turret_button = Button(c.SCREEN_WIDTH + 30, 20, 'BUY', 'white', 'blue', True)
-        self.cancel_button = Button(c.SCREEN_WIDTH + 30, 100, 'CANCEL', 'white', 'red', False)
+        self.cancel_button = Button(c.SCREEN_WIDTH + 180, 20, 'CANCEL', 'white', 'red', True)
+        self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 100, 'UPGRADE', 'orange', 'blue', True)
+        self.new_enemy_button = Button(c.SCREEN_WIDTH + 30, 180, 'ENEMY', 'blue', 'green', True)
 
         self.world = World()
 
@@ -69,16 +75,27 @@ class Game():
             for turret in self.turret_group:
                 turret.draw(self.screen)
 
+            # Draw buttons
             if self.turret_button.draw(self.screen):
                 self.placing_turret = True
+
+            if self.new_enemy_button.draw(self.screen):
+                self.enemy_group.add(Enemy(self.world.waypoints))
+
             if self.placing_turret:
                 cursor_pos = pg.mouse.get_pos()
                 cursor_rect = self.turret_cursor.get_rect()
                 cursor_rect.center = cursor_pos
                 if cursor_pos[0] < c.SCREEN_WIDTH:
                     self.screen.blit(self.turret_cursor, cursor_rect)
+
                 if self.cancel_button.draw(self.screen):
                     self.placing_turret = False
+
+            if self.selected_turret:
+                if self.selected_turret.upgrade_level < c.TURRET_LEVELS:
+                    if self.upgrade_button.draw(self.screen):
+                        self.selected_turret.upgrade()
 
             pg.display.flip()
 
@@ -94,7 +111,7 @@ class Game():
                 if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):
                     space_is_free = False
             if space_is_free:
-                self.turret_group.add(Turret(self.turret_sheet, mouse_tile_x, mouse_tile_y))
+                self.turret_group.add(Turret(self.turret_sprite_sheets, mouse_tile_x, mouse_tile_y))
 
     def select_turret(self, mouse_pos):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE

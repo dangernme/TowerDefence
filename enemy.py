@@ -32,6 +32,7 @@ class Enemy(pg.sprite.Sprite):
             self.movement = self.target - self.pos
         else:
             self.kill()
+            world.missed_enemies += 1
             world.health -= 1
 
 
@@ -55,3 +56,4 @@ class Enemy(pg.sprite.Sprite):
         if self.health <= 0:
             world.money += c.KILL_REWARD
             self.kill()
+            world.killed_enemies += 1

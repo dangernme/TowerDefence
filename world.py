@@ -16,10 +16,12 @@ class World:
         self.tile_map = []
         self.start = (0, 0)
         self.enemy_list = []
-        self.spawned_enemies = 0
         self.waypoint_data = []
         self.start_x = 0
         self.start_y = 0
+        self.spawned_enemies = 0
+        self.killed_enemies = 0
+        self.missed_enemies = 0
 
     def process_data(self):
         for layers in self.level_data['layers']:
@@ -47,6 +49,17 @@ class World:
                 self.enemy_list.append(enemy_type)
 
         random.shuffle(self.enemy_list)
+
+    def check_level_complete(self):
+        if self.killed_enemies + self.missed_enemies == len(self.enemy_list):
+            return True
+        return False
+
+    def reset_level(self):
+        self.enemy_list = []
+        self.spawned_enemies = 0
+        self.killed_enemies = 0
+        self.missed_enemies = 0
 
     def draw(self, surface):
         surface.blit(self.image, (0,0))

@@ -26,20 +26,35 @@ class Game():
         self.turret_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.turret_cursor = pg.transform.scale_by(self.turret_cursor, 0.8)
 
+        self.text_font = pg.font.SysFont('Consolas', 24, bold=True)
+        self.large_font = pg.font.SysFont('Consolas', 36)
+
+        # Enemies
+        self.last_enemy_spawn = pg.time.get_ticks()
+
+        self.enemy_images = {
+            'weak': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile245.png').convert_alpha(),
+            'medium': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile246.png').convert_alpha(),
+            'strong': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile247.png').convert_alpha(),
+            'elite': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile248.png').convert_alpha()
+        }
+
         # Sprite setup
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
         self.turret_button = Button(c.SCREEN_WIDTH + 30, 20, 'BUY', 'white', 'blue', True)
         self.cancel_button = Button(c.SCREEN_WIDTH + 180, 20, 'CANCEL', 'white', 'red', True)
         self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 100, 'UPGRADE', 'orange', 'blue', True)
-        self.new_enemy_button = Button(c.SCREEN_WIDTH + 30, 180, 'ENEMY', 'blue', 'green', True)
 
         self.world = World()
+        self.world.process_data()
+        self.world.process_enemies()
+
+    def draw_text(self, text, font, text_color, x, y):
+        image = font.render(text, True, text_color)
+        self.screen.blit(image, (x, y))
 
     def run(self):
-        enemy = Enemy(self.world.waypoints)
-        self.enemy_group.add(enemy)
-
         run = True
 
         while run:
@@ -54,12 +69,13 @@ class Game():
                         self.selected_turret = None
                         self.clear_selection()
                         if self.placing_turret:
-                            self.create_turret(mouse_pos)
+                            if self.world.money >= c.BUY_COST:
+                                self.create_turret(mouse_pos)
                         else:
                             self.selected_turret = self.select_turret(mouse_pos)
 
             # Update
-            self.enemy_group.update()
+            self.enemy_group.update(self.world)
             self.turret_group.update(self.enemy_group)
 
             # Highlight selected turret
@@ -75,12 +91,21 @@ class Game():
             for turret in self.turret_group:
                 turret.draw(self.screen)
 
+            self.draw_text(str(self.world.health), self.text_font, 'white', 0, 0)
+            self.draw_text(str(self.world.money), self.text_font, 'white', 0, 20)
+
+            # Spawn enemies
+            if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN:
+                if self.world.spawned_enemies < len(self.world.enemy_list):
+                    enemy_type = self.world.enemy_list[self.world.spawned_enemies]
+                    enemy = Enemy(enemy_type, self.world.waypoints, self.enemy_images)
+                    self.enemy_group.add(enemy)
+                    self.world.spawned_enemies += 1
+                    self.last_enemy_spawn = pg.time.get_ticks()
+
             # Draw buttons
             if self.turret_button.draw(self.screen):
                 self.placing_turret = True
-
-            if self.new_enemy_button.draw(self.screen):
-                self.enemy_group.add(Enemy(self.world.waypoints))
 
             if self.placing_turret:
                 cursor_pos = pg.mouse.get_pos()
@@ -95,7 +120,9 @@ class Game():
             if self.selected_turret:
                 if self.selected_turret.upgrade_level < c.TURRET_LEVELS:
                     if self.upgrade_button.draw(self.screen):
-                        self.selected_turret.upgrade()
+                        if self.world.money >= c.UPGRADE_COST:
+                            self.selected_turret.upgrade()
+                            self.world.money -= c.UPGRADE_COST
 
             pg.display.flip()
 
@@ -112,6 +139,7 @@ class Game():
                     space_is_free = False
             if space_is_free:
                 self.turret_group.add(Turret(self.turret_sprite_sheets, mouse_tile_x, mouse_tile_y))
+                self.world.money -= c.BUY_COST
 
     def select_turret(self, mouse_pos):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE

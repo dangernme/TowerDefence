@@ -39,7 +39,8 @@ class Game():
             'weak': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile245.png').convert_alpha(),
             'medium': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile246.png').convert_alpha(),
             'strong': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile247.png').convert_alpha(),
-            'elite': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile248.png').convert_alpha()
+            'elite': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile248.png').convert_alpha(),
+            'plane': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile271.png').convert_alpha()
         }
 
         # Sprite setup

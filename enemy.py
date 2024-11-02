@@ -35,10 +35,9 @@ class Enemy(pg.sprite.Sprite):
             world.missed_enemies += 1
             world.health -= 1
 
-
         dist = self.movement.length()
-        if dist >= self.speed:
-            self.pos += self.movement.normalize() * self.speed
+        if dist >= (self.speed * world.game_speed):
+            self.pos += self.movement.normalize() * self.speed  * world.game_speed
         else:
             if dist != 0:
                 self.pos += self.movement.normalize() * dist

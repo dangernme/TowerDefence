@@ -22,6 +22,7 @@ class World:
         self.spawned_enemies = 0
         self.killed_enemies = 0
         self.missed_enemies = 0
+        self.game_speed = 1
 
     def process_data(self):
         for layers in self.level_data['layers']:

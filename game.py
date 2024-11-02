@@ -50,6 +50,7 @@ class Game():
         self.cancel_button = Button(c.SCREEN_WIDTH + 180, 20, 'CANCEL', 'white', 'red', True)
         self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 100, 'UPGRADE', 'orange', 'blue', True)
         self.start_button = Button(c.SCREEN_WIDTH + 180, 100, 'START', 'green', 'black', True)
+        self.fast_forward_button = Button(c.SCREEN_WIDTH + 30, 180, 'FF', 'red', 'blue', False)
         self.restart_button = Button(440, 400, 'RESTART', 'black', 'red', True)
 
         self.world = World()
@@ -73,7 +74,7 @@ class Game():
 
                 # Update
                 self.enemy_group.update(self.world)
-                self.turret_group.update(self.enemy_group)
+                self.turret_group.update(self.enemy_group, self.world)
 
                 # Highlight selected turret
                 if self.selected_turret:
@@ -97,6 +98,11 @@ class Game():
                     if self.start_button.draw(self.screen):
                         self.level_started = True
                 else:
+                    # Fast forward option
+                    self.world.game_speed = 1
+                    if self.fast_forward_button.draw(self.screen):
+                        self.world.game_speed = 2
+
                     if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN:
                         if self.world.spawned_enemies < len(self.world.enemy_list):
                             enemy_type = self.world.enemy_list[self.world.spawned_enemies]

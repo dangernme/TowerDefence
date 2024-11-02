@@ -38,11 +38,11 @@ class Turret(pg.sprite.Sprite):
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
 
-    def update(self, enemy_group):
+    def update(self, enemy_group, world):
         if self.target:
             self.play_animation()
         else:
-            if pg.time.get_ticks() - self.last_shot > self.cooldown:
+            if pg.time.get_ticks() - self.last_shot > (self.cooldown / world.game_speed):
                 self.pick_target(enemy_group)
 
     def pick_target(self, enemy_group):

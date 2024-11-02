@@ -87,7 +87,6 @@ ENEMY_SPAWN_DATA = [
         'elite': 30,
         'plane': 3
     }
-
 ]
 
 ENEMY_DATA = {

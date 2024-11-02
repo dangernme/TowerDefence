@@ -51,6 +51,7 @@ class Game():
         self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 100, 'UPGRADE', 'orange', 'blue', True)
         self.start_button = Button(c.SCREEN_WIDTH + 180, 100, 'START', 'green', 'black', True)
         self.fast_forward_button = Button(c.SCREEN_WIDTH + 30, 180, 'FF', 'red', 'blue', False)
+        self.sell_turret_button = Button(c.SCREEN_WIDTH + 180, 180, 'SELL', 'red', 'black', True)
         self.restart_button = Button(440, 400, 'RESTART', 'black', 'red', True)
 
         self.world = World()
@@ -143,6 +144,10 @@ class Game():
                             if self.world.money >= c.UPGRADE_COST:
                                 self.selected_turret.upgrade()
                                 self.world.money -= c.UPGRADE_COST
+
+                    if self.sell_turret_button.draw(self.screen):
+                        self.world.money += c.SELL_REWARD * self.selected_turret.upgrade_level
+                        self.selected_turret.kill()
             else:
                 pg.draw.rect(self.screen, 'dodgerblue', (300, 300, 400, 200), border_radius=30)
                 if self.game_outcome == -1:

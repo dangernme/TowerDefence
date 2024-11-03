@@ -1,11 +1,11 @@
 import math
 import pygame as pg
 import constants as c
-from turret_data import TURRET_DATA
 
 class Turret(pg.sprite.Sprite):
-    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y):
+    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data):
         super().__init__()
+        self.turret_data = turret_data
         self.upgrade_level = 1
         self.sprite_sheets = sprite_sheets
         self.mouse_tile_x = mouse_tile_x
@@ -20,7 +20,7 @@ class Turret(pg.sprite.Sprite):
         # Animation
         self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.frame_index = 0
-        self.cooldown = TURRET_DATA[self.upgrade_level - 1].get('cooldown')
+        self.cooldown = self.turret_data[self.upgrade_level - 1].get('cooldown')
         self.last_shot = pg.time.get_ticks()
         self.angle = 90
         self.original_image = self.animation_list[self.frame_index]
@@ -30,7 +30,7 @@ class Turret(pg.sprite.Sprite):
         self.update_time = pg.time.get_ticks()
 
         # Range circle
-        self.range = TURRET_DATA[self.upgrade_level - 1].get('range')
+        self.range = self.turret_data[self.upgrade_level - 1].get('range')
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.set_colorkey((0, 0, 0))
         pg.draw.circle(self.range_image, 'blue', (self.range, self.range), self.range)
@@ -86,11 +86,11 @@ class Turret(pg.sprite.Sprite):
         self.upgrade_level += 1
         self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.original_image = self.animation_list[self.frame_index]
-        self.range = TURRET_DATA[self.upgrade_level - 1].get('range')
-        self.cooldown = TURRET_DATA[self.upgrade_level - 1].get('cooldown')
+        self.range = self.turret_data[self.upgrade_level - 1].get('range')
+        self.cooldown = self.turret_data[self.upgrade_level - 1].get('cooldown')
 
         # Upgrade range circle
-        self.range = TURRET_DATA[self.upgrade_level - 1].get('range')
+        self.range = self.turret_data[self.upgrade_level - 1].get('range')
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.set_colorkey((0, 0, 0))
         pg.draw.circle(self.range_image, 'blue', (self.range, self.range), self.range)

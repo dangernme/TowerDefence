@@ -3,7 +3,7 @@ import pygame as pg
 import constants as c
 
 class Turret(pg.sprite.Sprite):
-    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data):
+    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data, gun_sound):
         super().__init__()
         self.turret_data = turret_data
         self.upgrade_level = 1
@@ -16,6 +16,9 @@ class Turret(pg.sprite.Sprite):
         self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
         self.sell_reward = self.turret_data.get('constants').get('sell_reward')
         self.upgrade_costs = self.turret_data.get('constants').get('upgrade_cost')
+        self.gun_sound = gun_sound
+        gun_sound.set_volume(0.1)
+        self.gun_sound_played = False
 
         # Position
         self.x = (mouse_tile_x + 0.5) * c.TILE_SIZE
@@ -70,10 +73,16 @@ class Turret(pg.sprite.Sprite):
             self.update_time = pg.time.get_ticks()
             self.frame_index += 1
 
+            if self.frame_index == (len(self.animation_list) // 2): # Play the sound halfway through the animation
+                if not self.gun_sound_played:
+                    self.gun_sound.play()
+                    self.gun_sound_played = True
+
             if self.frame_index >= len(self.animation_list):
                 self.frame_index = 0
                 self.last_shot = pg.time.get_ticks()
                 self.target = None
+                self.gun_sound_played = False
 
     def load_images(self, sprite_sheet):
         animation_list = []

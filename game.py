@@ -13,6 +13,7 @@ class Game():
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
         pg.display.set_caption("Tower Defence")
+        pg.mixer.init()
 
         # Game variables
         self.placing_turret = False
@@ -21,6 +22,7 @@ class Game():
         self.game_over = False
         self.game_outcome = 0
         self.turret_type = None
+        self.gun_sound = None
 
         # Load assets
         self.turret_std_sprite_sheets = []
@@ -35,9 +37,11 @@ class Game():
 
         self.turret_std_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.turret_std_cursor = pg.transform.scale_by(self.turret_std_cursor, 0.8)
+        self.turret_std_sound = pg.mixer.Sound(r'assets\sounds\tock.wav')
 
         self.turret_laser_cursor = pg.image.load(r'assets\shakers\Blue\Weapons\weapon01.png').convert_alpha()
         self.turret_laser_cursor = pg.transform.scale_by(self.turret_laser_cursor, 0.8)
+        self.turret_laser_sound = pg.mixer.Sound(r'assets\sounds\laser_fire.wav')
         self.turret_data = None
         self.turret_sprite_sheets = []
 
@@ -143,12 +147,14 @@ class Game():
                     self.turret_type = 'std_gun'
                     self.turret_data = TURRET_DATA_STD_GUN
                     self.turret_sprite_sheets = self.turret_std_sprite_sheets
+                    self.gun_sound = self.turret_std_sound
 
                 if self.buy_laser_gun_button.draw(self.screen):
                     self.placing_turret = True
                     self.turret_type = 'laser_gun'
                     self.turret_data = TURRET_DATA_LASER_GUN
                     self.turret_sprite_sheets = self.turret_laser_sprite_sheets
+                    self.gun_sound = self.turret_laser_sound
 
                 if self.placing_turret:
                     turret_cursor = None
@@ -221,7 +227,7 @@ class Game():
                 if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):
                     space_is_free = False
             if space_is_free:
-                self.turret_group.add(Turret(self.turret_sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data))
+                self.turret_group.add(Turret(self.turret_sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data, self.gun_sound))
                 self.world.money -= self.turret_data.get('constants').get('buy_cost')
 
     def select_turret(self, mouse_pos):

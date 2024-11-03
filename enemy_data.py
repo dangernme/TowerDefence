@@ -112,7 +112,7 @@ ENEMY_DATA = {
     },
         'plane': {
         'reward': 25,
-        'health': 70,
-        'speed': 9
+        'health': 60,
+        'speed': 8
     }
 }

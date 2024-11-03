@@ -3,11 +3,12 @@ import pygame as pg
 import constants as c
 
 class Turret(pg.sprite.Sprite):
-    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data, gun_sound):
+    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data, gun_sound, base):
         super().__init__()
         self.turret_data = turret_data
         self.upgrade_level = 1
         self.upgrade_max_level = self.turret_data.get('constants').get('levels')
+        self.base_image = base
         self.sprite_sheets = sprite_sheets
         self.mouse_tile_x = mouse_tile_x
         self.mouse_tile_y = mouse_tile_y
@@ -34,6 +35,8 @@ class Turret(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
+        self.base_image_rect = self.base_image.get_rect()
+        self.base_image_rect.center = (self.x, self.y)
         self.update_time = pg.time.get_ticks()
 
         # Range circle
@@ -92,6 +95,7 @@ class Turret(pg.sprite.Sprite):
             temp_img = sprite_sheet.subsurface(x * size, 0, size, size)
             temp_img = pg.transform.scale_by(temp_img, 0.8)
             animation_list.append(temp_img)
+        self.base_image = pg.transform.scale_by(self.base_image, 0.5)
 
         return animation_list
 
@@ -117,6 +121,7 @@ class Turret(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
+        surface.blit(self.base_image, self.base_image_rect)
         if self.selected:
             surface.blit(self.range_image, self.range_rect)
         surface.blit(self.image, self.rect)

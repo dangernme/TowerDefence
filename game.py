@@ -16,6 +16,7 @@ class Game():
         pg.mixer.init()
 
         # Game variables
+        self.run = True
         self.placing_turret = False
         self.selected_turret = None
         self.level_started = False
@@ -80,14 +81,12 @@ class Game():
         image = font.render(text, True, text_color)
         self.screen.blit(image, pos)
 
-    def run(self):
-        run = True
+    def run_game(self):
+        self.run = True
 
-        while run:
+        while self.run:
             self.clock.tick(c.FPS)
             total_hit_points = 0
-            for enemy in self.enemy_group:
-                total_hit_points += enemy.health
 
             if not self.game_over:
                 if self.world.health <= 0:
@@ -111,7 +110,6 @@ class Game():
                 self.draw_text(f'\u2665 {self.world.health}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 10))
                 self.draw_text(f'$ {self.world.money}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 30))
                 self.draw_text(f'L {self.world.level}/{c.TOTAL_LEVELS}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 50))
-                self.draw_text(f'HP {total_hit_points}', self.text_font, 'white', (c.SCREEN_WIDTH + 120, 10))
 
                 for turret in self.turret_group:
                     turret.draw(self.screen)
@@ -126,7 +124,7 @@ class Game():
                     if self.fast_forward_button.draw(self.screen):
                         self.world.game_speed = c.FAST_FORWARD_SPEED
 
-                    if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN:
+                    if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN / self.world.game_speed:
                         if self.world.spawned_enemies < len(self.world.enemy_list):
                             enemy_type = self.world.enemy_list[self.world.spawned_enemies]
                             enemy = Enemy(enemy_type, self.world.waypoints, self.enemy_images)
@@ -186,47 +184,35 @@ class Game():
                         self.world.money += self.selected_turret.sell_reward * self.selected_turret.upgrade_level
                         self.selected_turret.kill()
             else:
-                pg.draw.rect(self.screen, 'dodgerblue', (300, 300, 400, 200), border_radius=30)
-                if self.game_outcome == -1:
-                    self.draw_text('GAME OVER', self.large_font, 'grey0', (410, 320))
-                elif self.game_outcome == 1:
-                    self.draw_text('YOU WIN', self.large_font, 'grey0', (410, 320))
+                self.handle_game_over()
 
-                if self.restart_button.draw(self.screen):
-                    self.game_over = False
-                    self.level_started = False
-                    self.placing_turret = False
-                    self.selected_turret = None
-                    self.last_enemy_spawn = pg.time.get_ticks()
-                    self.world = World()
-                    self.world.process_data()
-                    self.world.process_enemies()
-                    self.enemy_group.empty()
-                    self.turret_group.empty()
+            self.event_handler()
 
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    run = False
-                if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
-                    if self.selected_turret:
-                        self.clear_selection()
-                        self.selected_turret = None
-                    if self.placing_turret:
-                        self.placing_turret = False
-                        self.turret_cursor = None
-                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-                    mouse_pos = pg.mouse.get_pos()
-                    if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
-                        self.selected_turret = None
-                        self.clear_selection()
-                        if self.placing_turret:
-                            if self.world.money >= self.turret_data.get('constants').get('buy_cost'):
-                                self.create_turret(mouse_pos, self.turret_data)
-                        else:
-                            self.selected_turret = self.select_turret(mouse_pos)
             pg.display.flip()
 
         pg.quit()
+
+    def handle_game_over(self):
+        pg.draw.rect(self.screen, 'dodgerblue', (300, 300, 400, 200), border_radius=30)
+        if self.game_outcome == -1:
+            self.draw_text('GAME OVER', self.large_font, 'grey0', (410, 320))
+        elif self.game_outcome == 1:
+            self.draw_text('YOU WIN', self.large_font, 'grey0', (410, 320))
+
+        if self.restart_button.draw(self.screen):
+            self.restart()
+
+    def restart(self):
+        self.game_over = False
+        self.level_started = False
+        self.placing_turret = False
+        self.selected_turret = None
+        self.last_enemy_spawn = pg.time.get_ticks()
+        self.world = World()
+        self.world.process_data()
+        self.world.process_enemies()
+        self.enemy_group.empty()
+        self.turret_group.empty()
 
     def create_turret(self, mouse_pos, turret_data):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
@@ -250,6 +236,29 @@ class Game():
                 return turret
 
         return None
+
+    def event_handler(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self.run = False
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+                if self.selected_turret:
+                    self.clear_selection()
+                    self.selected_turret = None
+                if self.placing_turret:
+                    self.placing_turret = False
+                    self.turret_cursor = None
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_pos = pg.mouse.get_pos()
+                if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
+                    self.selected_turret = None
+                    self.clear_selection()
+                    if self.placing_turret:
+                        if self.world.money >= self.turret_data.get('constants').get('buy_cost'):
+                            self.create_turret(mouse_pos, self.turret_data)
+                    else:
+                        self.selected_turret = self.select_turret(mouse_pos)
+
 
     def clear_selection(self):
         for turret in self.turret_group:

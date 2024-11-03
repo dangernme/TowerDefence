@@ -23,6 +23,7 @@ class Game():
         self.game_outcome = 0
         self.turret_type = None
         self.gun_sound = None
+        self.turret_cursor = None
 
         # Load assets
         self.turret_std_sprite_sheets = []
@@ -84,6 +85,9 @@ class Game():
 
         while run:
             self.clock.tick(c.FPS)
+            total_hit_points = 0
+            for enemy in self.enemy_group:
+                total_hit_points += enemy.health
 
             if not self.game_over:
                 if self.world.health <= 0:
@@ -107,6 +111,7 @@ class Game():
                 self.draw_text(f'\u2665 {self.world.health}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 10))
                 self.draw_text(f'$ {self.world.money}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 30))
                 self.draw_text(f'L {self.world.level}/{c.TOTAL_LEVELS}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 50))
+                self.draw_text(f'HP {total_hit_points}', self.text_font, 'white', (c.SCREEN_WIDTH + 120, 10))
 
                 for turret in self.turret_group:
                     turret.draw(self.screen)
@@ -157,16 +162,15 @@ class Game():
                     self.gun_sound = self.turret_laser_sound
 
                 if self.placing_turret:
-                    turret_cursor = None
                     if self.turret_type == 'std_gun':
-                        turret_cursor = self.turret_std_cursor
+                        self.turret_cursor = self.turret_std_cursor
                     elif self.turret_type == 'laser_gun':
-                        turret_cursor = self.turret_laser_cursor
+                        self.turret_cursor = self.turret_laser_cursor
                     cursor_pos = pg.mouse.get_pos()
-                    cursor_rect = turret_cursor.get_rect()
+                    cursor_rect = self.turret_cursor.get_rect()
                     cursor_rect.center = cursor_pos
                     if cursor_pos[0] < c.SCREEN_WIDTH:
-                        self.screen.blit(turret_cursor, cursor_rect)
+                        self.screen.blit(self.turret_cursor, cursor_rect)
 
                     if self.cancel_button.draw(self.screen):
                         self.placing_turret = False
@@ -203,6 +207,13 @@ class Game():
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     run = False
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+                    if self.selected_turret:
+                        self.clear_selection()
+                        self.selected_turret = None
+                    if self.placing_turret:
+                        self.placing_turret = False
+                        self.turret_cursor = None
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = pg.mouse.get_pos()
                     if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:

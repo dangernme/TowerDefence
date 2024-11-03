@@ -10,6 +10,7 @@ class Enemy(pg.sprite.Sprite):
         self.angle = 0
         self.speed = ENEMY_DATA.get(enemy_type)['speed']
         self.health = ENEMY_DATA.get(enemy_type)['health']
+        self.reward = ENEMY_DATA.get(enemy_type)['reward']
         self.waypoints = waypoints
         self.pos = Vector2(self.waypoints[0])
         self.original_image = images.get(enemy_type)
@@ -53,6 +54,6 @@ class Enemy(pg.sprite.Sprite):
 
     def check_alive(self, world):
         if self.health <= 0:
-            world.money += c.KILL_REWARD
+            world.money += self.reward
             self.kill()
             world.killed_enemies += 1

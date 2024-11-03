@@ -46,12 +46,12 @@ class Game():
         # Sprite setup
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
-        self.turret_button = Button(c.SCREEN_WIDTH + 30, 20, 'BUY', 'white', 'blue', True)
-        self.cancel_button = Button(c.SCREEN_WIDTH + 180, 20, 'CANCEL', 'white', 'red', True)
-        self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 100, 'UPGRADE', 'orange', 'blue', True)
-        self.start_button = Button(c.SCREEN_WIDTH + 180, 100, 'START', 'green', 'black', True)
-        self.fast_forward_button = Button(c.SCREEN_WIDTH + 30, 180, 'FF', 'red', 'blue', False)
-        self.sell_turret_button = Button(c.SCREEN_WIDTH + 180, 180, 'SELL', 'red', 'black', True)
+        self.turret_button = Button(c.SCREEN_WIDTH + 30, 80, 'BUY', 'white', 'blue', True)
+        self.cancel_button = Button(c.SCREEN_WIDTH + 180, 80, 'CANCEL', 'white', 'red', True)
+        self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 160, 'UPGRADE', 'orange', 'blue', True)
+        self.start_button = Button(c.SCREEN_WIDTH + 180, 160, 'START', 'green', 'black', True)
+        self.fast_forward_button = Button(c.SCREEN_WIDTH + 30, 240, 'FF', 'red', 'blue', False)
+        self.sell_turret_button = Button(c.SCREEN_WIDTH + 180, 240, 'SELL', 'red', 'black', True)
         self.restart_button = Button(440, 400, 'RESTART', 'black', 'red', True)
 
         self.world = World()
@@ -90,9 +90,9 @@ class Game():
                 for turret in self.turret_group:
                     turret.draw(self.screen)
 
-                self.draw_text(f'\u2665 {self.world.health}', self.text_font, 'white', (0, 0))
-                self.draw_text(f'$ {self.world.money}', self.text_font, 'white', (0, 20))
-                self.draw_text(f'L {self.world.level}/{c.TOTAL_LEVELS}', self.text_font, 'white', (0, 40))
+                self.draw_text(f'\u2665 {self.world.health}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 10))
+                self.draw_text(f'$ {self.world.money}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 30))
+                self.draw_text(f'L {self.world.level}/{c.TOTAL_LEVELS}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 50))
 
                 # Spawn enemies
                 if not self.level_started:

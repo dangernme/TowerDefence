@@ -24,12 +24,12 @@ class Game():
 
         # Load assets
         self.turret_std_sprite_sheets = []
-        for x in range(1, c.TURRET_LEVELS + 1):
+        for x in range(1, TURRET_DATA_STD_GUN.get('constants').get('levels') + 1):
             self.turret_sheet = pg.image.load(rf'assets\shakers\Red\Weapons\turret_01_mk{x}.png').convert_alpha()
             self.turret_std_sprite_sheets.append(self.turret_sheet)
 
         self.turret_laser_sprite_sheets = []
-        for x in range(1, c.TURRET_LEVELS + 1):
+        for x in range(1, TURRET_DATA_LASER_GUN.get('constants').get('levels') + 1):
             self.turret_sheet = pg.image.load(rf'assets\shakers\Blue\Weapons\turret_02_mk{x}.png').convert_alpha()
             self.turret_laser_sprite_sheets.append(self.turret_sheet)
 
@@ -100,12 +100,12 @@ class Game():
                 self.world.draw(self.screen)
                 self.enemy_group.draw(self.screen)
 
-                for turret in self.turret_group:
-                    turret.draw(self.screen)
-
                 self.draw_text(f'\u2665 {self.world.health}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 10))
                 self.draw_text(f'$ {self.world.money}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 30))
                 self.draw_text(f'L {self.world.level}/{c.TOTAL_LEVELS}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 50))
+
+                for turret in self.turret_group:
+                    turret.draw(self.screen)
 
                 # Spawn enemies
                 if not self.level_started:
@@ -115,7 +115,7 @@ class Game():
                     # Fast forward option
                     self.world.game_speed = 1
                     if self.fast_forward_button.draw(self.screen):
-                        self.world.game_speed = 2
+                        self.world.game_speed = c.FAST_FORWARD_SPEED
 
                     if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN:
                         if self.world.spawned_enemies < len(self.world.enemy_list):
@@ -166,14 +166,14 @@ class Game():
                         self.placing_turret = False
 
                 if self.selected_turret:
-                    if self.selected_turret.upgrade_level < c.TURRET_LEVELS:
+                    if self.selected_turret.upgrade_level < self.selected_turret.upgrade_max_level:
                         if self.upgrade_button.draw(self.screen):
-                            if self.world.money >= c.UPGRADE_COST:
+                            if self.world.money >= self.selected_turret.upgrade_costs:
                                 self.selected_turret.upgrade()
-                                self.world.money -= c.UPGRADE_COST
+                                self.world.money -= self.selected_turret.upgrade_costs
 
                     if self.sell_turret_button.draw(self.screen):
-                        self.world.money += c.SELL_REWARD * self.selected_turret.upgrade_level
+                        self.world.money += self.selected_turret.sell_reward * self.selected_turret.upgrade_level
                         self.selected_turret.kill()
             else:
                 pg.draw.rect(self.screen, 'dodgerblue', (300, 300, 400, 200), border_radius=30)
@@ -194,7 +194,6 @@ class Game():
                     self.enemy_group.empty()
                     self.turret_group.empty()
 
-
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     run = False
@@ -204,7 +203,7 @@ class Game():
                         self.selected_turret = None
                         self.clear_selection()
                         if self.placing_turret:
-                            if self.world.money >= c.BUY_COST:
+                            if self.world.money >= self.turret_data.get('constants').get('buy_cost'):
                                 self.create_turret(mouse_pos, self.turret_data)
                         else:
                             self.selected_turret = self.select_turret(mouse_pos)
@@ -223,7 +222,7 @@ class Game():
                     space_is_free = False
             if space_is_free:
                 self.turret_group.add(Turret(self.turret_sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data))
-                self.world.money -= c.BUY_COST
+                self.world.money -= self.turret_data.get('constants').get('buy_cost')
 
     def select_turret(self, mouse_pos):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE

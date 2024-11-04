@@ -1,9 +1,8 @@
 import pygame as pg
 from enemy import Enemy
 from world import World
-from turret import Turret
 from button import Button
-from turret_data import TURRET_DATA_STD_GUN, TURRET_DATA_LASER_GUN
+from turrets.turret_factory import TurretFactory
 import constants as c
 
 class Game():
@@ -23,32 +22,15 @@ class Game():
         self.game_over = False
         self.game_outcome = 0
         self.turret_type = None
-        self.gun_sound = None
         self.turret_cursor = None
-        self.turret_base = None
+        self.turret_factory = TurretFactory()
 
         # Load assets
-        self.turret_std_sprite_sheets = []
-        for x in range(1, TURRET_DATA_STD_GUN.get('constants').get('levels') + 1):
-            self.turret_sheet = pg.image.load(rf'assets\shakers\Red\Weapons\turret_01_mk{x}.png').convert_alpha()
-            self.turret_std_sprite_sheets.append(self.turret_sheet)
-        self.turret_std_base = pg.image.load(r'assets\shakers\Red\Towers\base.png').convert_alpha()
-
-        self.turret_laser_sprite_sheets = []
-        for x in range(1, TURRET_DATA_LASER_GUN.get('constants').get('levels') + 1):
-            self.turret_sheet = pg.image.load(rf'assets\shakers\Blue\Weapons\turret_02_mk{x}.png').convert_alpha()
-            self.turret_laser_sprite_sheets.append(self.turret_sheet)
-        self.turret_laser_base = pg.image.load(r'assets\shakers\Blue\Towers\base.png').convert_alpha()
-
         self.turret_std_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.turret_std_cursor = pg.transform.scale_by(self.turret_std_cursor, 0.8)
-        self.turret_std_sound = pg.mixer.Sound(r'assets\sounds\tock.wav')
 
         self.turret_laser_cursor = pg.image.load(r'assets\shakers\Blue\Weapons\weapon01.png').convert_alpha()
         self.turret_laser_cursor = pg.transform.scale_by(self.turret_laser_cursor, 0.8)
-        self.turret_laser_sound = pg.mixer.Sound(r'assets\sounds\laser_fire.wav')
-        self.turret_data = None
-        self.turret_sprite_sheets = []
 
         self.text_font = pg.font.SysFont('Consolas', 24, bold=True)
         self.large_font = pg.font.SysFont('Consolas', 36)
@@ -69,7 +51,7 @@ class Game():
         self.turret_group = pg.sprite.Group()
         self.buy_std_gun_button = Button(c.SCREEN_WIDTH + 30, 80, 'STD GUN', 'white', 'blue', True)
         self.buy_laser_gun_button = Button(c.SCREEN_WIDTH + 30, 160, 'LASER GUN', 'white', 'blue', True)
-      #  self.cancel_button = Button(c.SCREEN_WIDTH + 180, 80, 'CANCEL', 'white', 'red', True)
+        self.cancel_button = Button(c.SCREEN_WIDTH + 180, 80, 'CANCEL', 'white', 'red', True)
         self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 320, 'UPGRADE', 'orange', 'blue', True)
         self.start_button = Button(c.SCREEN_WIDTH + 180, 160, 'START', 'green', 'black', True)
         self.fast_forward_button = Button(c.SCREEN_WIDTH + 30, 240, 'FF', 'red', 'blue', False)
@@ -149,24 +131,16 @@ class Game():
                 # Draw buttons
                 if self.buy_std_gun_button.draw(self.screen):
                     self.placing_turret = True
-                    self.turret_type = 'std_gun'
-                    self.turret_data = TURRET_DATA_STD_GUN
-                    self.turret_sprite_sheets = self.turret_std_sprite_sheets
-                    self.gun_sound = self.turret_std_sound
-                    self.turret_base = self.turret_std_base
+                    self.turret_type = 'basic'
 
                 if self.buy_laser_gun_button.draw(self.screen):
                     self.placing_turret = True
-                    self.turret_type = 'laser_gun'
-                    self.turret_data = TURRET_DATA_LASER_GUN
-                    self.turret_sprite_sheets = self.turret_laser_sprite_sheets
-                    self.gun_sound = self.turret_laser_sound
-                    self.turret_base = self.turret_laser_base
+                    self.turret_type = 'laser'
 
                 if self.placing_turret:
-                    if self.turret_type == 'std_gun':
+                    if self.turret_type == 'basic':
                         self.turret_cursor = self.turret_std_cursor
-                    elif self.turret_type == 'laser_gun':
+                    elif self.turret_type == 'laser':
                         self.turret_cursor = self.turret_laser_cursor
                     cursor_pos = pg.mouse.get_pos()
                     cursor_rect = self.turret_cursor.get_rect()
@@ -174,8 +148,8 @@ class Game():
                     if cursor_pos[0] < c.SCREEN_WIDTH:
                         self.screen.blit(self.turret_cursor, cursor_rect)
 
-                #    if self.cancel_button.draw(self.screen):
-                 #       self.placing_turret = False
+                    if self.cancel_button.draw(self.screen):
+                        self.placing_turret = False
 
                 if self.selected_turret:
                     if self.selected_turret.upgrade_level < self.selected_turret.upgrade_max_level:
@@ -228,8 +202,8 @@ class Game():
                 if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):
                     space_is_free = False
             if space_is_free:
-                self.turret_group.add(Turret(self.turret_sprite_sheets, mouse_tile_x, mouse_tile_y, self.turret_data, self.gun_sound, self.turret_base))
-                self.world.money -= self.turret_data.get('constants').get('buy_cost')
+                self.turret_group.add(self.turret_factory.create_turret(self.turret_type, mouse_tile_x, mouse_tile_y))
+                self.world.money -= self.turret_factory.get_turret_costs(self.turret_type)
 
     def select_turret(self, mouse_pos):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
@@ -258,7 +232,7 @@ class Game():
                     self.selected_turret = None
                     self.clear_selection()
                     if self.placing_turret:
-                        if self.world.money >= self.turret_data.get('constants').get('buy_cost'):
+                        if self.world.money >= self.turret_factory.get_turret_costs(self.turret_type):
                             self.create_turret(mouse_pos)
                     else:
                         self.selected_turret = self.select_turret(mouse_pos)

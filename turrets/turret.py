@@ -3,13 +3,13 @@ import pygame as pg
 import constants as c
 
 class Turret(pg.sprite.Sprite):
-    def __init__(self, sprite_sheets, mouse_tile_x, mouse_tile_y, turret_data, gun_sound, base):
+    def __init__(self, mouse_tile_x, mouse_tile_y, turret_data):
         super().__init__()
         self.turret_data = turret_data
         self.upgrade_level = 1
         self.upgrade_max_level = self.turret_data.get('constants').get('levels')
-        self.base_image = base
-        self.sprite_sheets = sprite_sheets
+        self.base_image = None
+        self.original_base_image = None
         self.mouse_tile_x = mouse_tile_x
         self.mouse_tile_y = mouse_tile_y
         self.selected = False
@@ -17,26 +17,23 @@ class Turret(pg.sprite.Sprite):
         self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
         self.sell_reward = self.turret_data.get('constants').get('sell_reward')
         self.upgrade_costs = self.turret_data.get('constants').get('upgrade_cost')
-        self.gun_sound = gun_sound
-        gun_sound.set_volume(0.1)
+        self.gun_sound = None
         self.gun_sound_played = False
+        self.original_image = None
+        self.image = None
+        self.rect = None
+        self.animation_list = []
+        self.base_image_rect = None
 
         # Position
         self.x = (mouse_tile_x + 0.5) * c.TILE_SIZE
         self.y = (mouse_tile_y + 0.5) * c.TILE_SIZE
 
         # Animation
-        self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.frame_index = 0
         self.cooldown = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('cooldown')
         self.last_shot = pg.time.get_ticks()
         self.angle = 90
-        self.original_image = self.animation_list[self.frame_index]
-        self.image = pg.transform.rotate(self.original_image, self.angle)
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x, self.y)
-        self.base_image_rect = self.base_image.get_rect()
-        self.base_image_rect.center = (self.x, self.y)
         self.update_time = pg.time.get_ticks()
 
         # Range circle
@@ -46,7 +43,6 @@ class Turret(pg.sprite.Sprite):
         pg.draw.circle(self.range_image, 'blue', (self.range, self.range), self.range)
         self.range_image.set_alpha(30)
         self.range_rect = self.range_image.get_rect()
-        self.range_rect.center = self.rect.center
 
     def update(self, enemy_group, world):
         if self.target:
@@ -95,7 +91,6 @@ class Turret(pg.sprite.Sprite):
             temp_img = sprite_sheet.subsurface(x * size, 0, size, size)
             temp_img = pg.transform.scale_by(temp_img, 0.8)
             animation_list.append(temp_img)
-        self.base_image = pg.transform.scale_by(self.base_image, 0.5)
 
         return animation_list
 

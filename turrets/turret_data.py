@@ -1,4 +1,4 @@
-TURRET_DATA_STD_GUN = {
+TURRET_DATA_BASIC_GUN = {
     'constants': {
         'animation_steps': 8,
         'buy_cost': 150,

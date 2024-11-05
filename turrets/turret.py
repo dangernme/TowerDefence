@@ -21,7 +21,7 @@ class Turret(pg.sprite.Sprite):
         self.upgrade_max_level = self.turret_data.get('constants').get('levels')
         self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
         self.sell_reward = self.turret_data.get('constants').get('sell_reward')
-        self.upgrade_costs = self.turret_data.get('constants').get('upgrade_cost')
+        self.upgrade_costs = self.turret_data.get('constants').get('upgrade_cost') * self.upgrade_level
 
         # Sound
         self.gun_sound = None
@@ -104,6 +104,7 @@ class Turret(pg.sprite.Sprite):
 
     def upgrade(self):
         self.upgrade_level += 1
+        self.upgrade_costs = math.ceil(self.upgrade_costs * self.upgrade_level * 0.6)
         self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.original_image = self.animation_list[self.frame_index]
         self.range = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('range')

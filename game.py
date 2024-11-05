@@ -29,7 +29,7 @@ class Game():
         # Load assets
         self.turret_std_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.turret_std_cursor = pg.transform.scale_by(self.turret_std_cursor, 0.8)
-        self.turret_laser_cursor = pg.image.load(r'assets\shakers\Blue\Weapons\weapon01.png').convert_alpha()
+        self.turret_laser_cursor = pg.image.load(r'assets\shakers\Blue\Weapons\weapon05.png').convert_alpha()
         self.turret_laser_cursor = pg.transform.scale_by(self.turret_laser_cursor, 0.8)
         self.text_font = pg.font.SysFont('Consolas', 24, bold=True)
         self.large_font = pg.font.SysFont('Consolas', 36)
@@ -40,14 +40,14 @@ class Game():
         # Sprite setup
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
-        self.buy_std_gun_button = Button(c.SCREEN_WIDTH + 30, 80, 'STD GUN', 'white', 'blue', True)
-        self.buy_laser_gun_button = Button(c.SCREEN_WIDTH + 30, 160, 'LASER GUN', 'white', 'blue', True)
-        self.cancel_button = Button(c.SCREEN_WIDTH + 180, 80, 'CANCEL', 'white', 'red', True)
-        self.upgrade_button = Button(c.SCREEN_WIDTH + 30, 320, 'UPGRADE', 'orange', 'blue', True)
-        self.start_button = Button(c.SCREEN_WIDTH + 180, 160, 'START', 'green', 'black', True)
-        self.fast_forward_button = Button(c.SCREEN_WIDTH + 30, 240, 'FF', 'red', 'blue', False)
-        self.sell_turret_button = Button(c.SCREEN_WIDTH + 180, 800, 'SELL', 'red', 'black', True)
-        self.restart_button = Button(440, 400, 'RESTART', 'black', 'red', True)
+        self.start_button = Button(c.SCREEN_WIDTH + 130, 20, 'START', 'green', 'black', True)
+        self.buy_basic_gun_button = Button(c.SCREEN_WIDTH + 70, 80, f'BASIC GUN ${self.turret_factory.get_turret_costs('basic')}', 'white', 'red', True)
+        self.buy_laser_gun_button = Button(c.SCREEN_WIDTH + 70, 130, f'LASER GUN ${self.turret_factory.get_turret_costs('laser')}', 'white', 'blue', True)
+        self.cancel_button = Button(c.SCREEN_WIDTH + 70, 180, 'CANCEL', 'white', 'red', True)
+        self.upgrade_button = Button(c.SCREEN_WIDTH + 70, 230, 'UPGRADE', 'orange', 'black', True)
+        self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 280, 'FAST', 'red', 'blue', False)
+        self.sell_turret_button = Button(c.SCREEN_WIDTH + 70, 800, 'SELL TURRET', 'red', 'black', True)
+        self.restart_button = Button(410, 400, 'RESTART', 'black', 'red', True)
 
         self.world = World()
         self.world.process_data()
@@ -99,7 +99,8 @@ class Game():
                     if self.fast_forward_button.draw(self.screen):
                         self.world.game_speed = c.FAST_FORWARD_SPEED
 
-                    if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN / self.world.game_speed:
+                    decreasing_spawn_cooldown = max(c.MAX_SPAWN_COOLDOWN / self.world.level, c.MIN_SPAWN_COOLDOWN)
+                    if pg.time.get_ticks() - self.last_enemy_spawn > decreasing_spawn_cooldown / self.world.game_speed:
                         if self.world.spawned_enemies < len(self.world.enemy_list):
                             enemy_type = self.world.enemy_list[self.world.spawned_enemies]
                             enemy = self.enemy_factory.create_enemy(enemy_type, self.world.waypoints)
@@ -111,7 +112,7 @@ class Game():
                     self.load_next_level()
 
                 # Draw buttons
-                if self.buy_std_gun_button.draw(self.screen):
+                if self.buy_basic_gun_button.draw(self.screen):
                     self.placing_turret = True
                     self.turret_type = 'basic'
 
@@ -135,10 +136,12 @@ class Game():
 
                 if self.selected_turret:
                     if self.selected_turret.upgrade_level < self.selected_turret.upgrade_max_level:
+                        self.upgrade_button.text = f'UPGRADE ${self.selected_turret.upgrade_costs}'
+
                         if self.upgrade_button.draw(self.screen):
                             if self.world.money >= self.selected_turret.upgrade_costs:
-                                self.selected_turret.upgrade()
                                 self.world.money -= self.selected_turret.upgrade_costs
+                                self.selected_turret.upgrade()
 
                     if self.sell_turret_button.draw(self.screen):
                         self.world.money += self.selected_turret.sell_reward * self.selected_turret.upgrade_level
@@ -169,7 +172,7 @@ class Game():
         if self.game_outcome == -1:
             self.draw_text('GAME OVER', self.large_font, 'grey0', (410, 320))
         elif self.game_outcome == 1:
-            self.draw_text('YOU WIN', self.large_font, 'grey0', (410, 320))
+            self.draw_text('YOU WIN', self.large_font, 'grey0', (430, 320))
 
         if self.restart_button.draw(self.screen):
             self.restart()

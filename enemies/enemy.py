@@ -1,22 +1,20 @@
 import math
 import pygame as pg
 from pygame.math import Vector2
-from enemy_data import ENEMY_DATA
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, enemy_type, waypoints, images):
+    def __init__(self, waypoints, enemy_data):
         super().__init__()
+        self.enemy_data = enemy_data
         self.angle = 0
-        self.speed = ENEMY_DATA.get(enemy_type)['speed']
-        self.health = ENEMY_DATA.get(enemy_type)['health']
-        self.reward = ENEMY_DATA.get(enemy_type)['reward']
+        self.speed = self.enemy_data.get('speed')
+        self.health = self.enemy_data.get('health')
+        self.reward = self.enemy_data.get('reward')
         self.waypoints = waypoints
         self.pos = Vector2(self.waypoints[0])
-        self.original_image = images.get(enemy_type)
-        self.original_image = pg.transform.scale_by(self.original_image, 1.5)
-        self.image = pg.transform.rotate(self.original_image, self.angle)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
+        self.original_image = None
+        self.image = None
+        self.rect = None
         self.target_waypoint = 1
         self.target = None
         self.movement = None

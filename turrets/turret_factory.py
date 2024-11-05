@@ -1,7 +1,6 @@
 import pygame as pg
 from turrets.turret_data import TURRET_DATA_BASIC_GUN, TURRET_DATA_LASER_GUN
 from turrets.turret import Turret
-# from laser_turret import LaserTurret
 
 class TurretFactory:
     def __init__(self):

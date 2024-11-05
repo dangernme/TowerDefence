@@ -1,7 +1,7 @@
 import json
 import random
 import pygame as pg
-from enemy_data import ENEMY_SPAWN_DATA
+from enemies.enemy_data import ENEMY_SPAWN_DATA
 import constants as c
 
 class World:

@@ -1,5 +1,5 @@
 import pygame as pg
-from enemy import Enemy
+from enemies.enemy_factory import EnemyFactory
 from world import World
 from button import Button
 from turrets.turret_factory import TurretFactory
@@ -24,6 +24,7 @@ class Game():
         self.turret_type = None
         self.turret_cursor = None
         self.turret_factory = TurretFactory()
+        self.enemy_factory = EnemyFactory()
 
         # Load assets
         self.turret_std_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
@@ -35,14 +36,6 @@ class Game():
 
         # Enemies
         self.last_enemy_spawn = pg.time.get_ticks()
-
-        self.enemy_images = {
-            'weak': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile245.png').convert_alpha(),
-            'medium': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile246.png').convert_alpha(),
-            'strong': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile247.png').convert_alpha(),
-            'elite': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile248.png').convert_alpha(),
-            'plane': pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile271.png').convert_alpha()
-        }
 
         # Sprite setup
         self.enemy_group = pg.sprite.Group()
@@ -109,7 +102,7 @@ class Game():
                     if pg.time.get_ticks() - self.last_enemy_spawn > c.SPAWN_COOLDOWN / self.world.game_speed:
                         if self.world.spawned_enemies < len(self.world.enemy_list):
                             enemy_type = self.world.enemy_list[self.world.spawned_enemies]
-                            enemy = Enemy(enemy_type, self.world.waypoints, self.enemy_images)
+                            enemy = self.enemy_factory.create_enemy(enemy_type, self.world.waypoints)
                             self.enemy_group.add(enemy)
                             self.world.spawned_enemies += 1
                             self.last_enemy_spawn = pg.time.get_ticks()

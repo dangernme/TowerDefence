@@ -3,9 +3,6 @@
 laser one-shot #3.wav by djfroyd -- https://freesound.org/s/348162/ -- License: Attribution 3.0
 tic_alt.wav by fellur -- https://freesound.org/s/429721/ -- License: Creative Commons 0
 
-Modifications with Audacity https://www.audacityteam.org
-
-
 # GRAPHICS
 
 https://zintoki.itch.io/ground-shaker
@@ -32,3 +29,11 @@ Request:  http://request.kenney.nl
 Follow on Twitter for updates:
 @KenneyNL
 
+
+# Tools
+
+Pygame https://www.pygame.org
+Tiled https://www.mapeditor.org/
+VSCode https://code.visualstudio.com/
+git https://git-scm.com/
+Audacity https://www.audacityteam.org

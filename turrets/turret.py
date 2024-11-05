@@ -5,31 +5,39 @@ import constants as c
 class Turret(pg.sprite.Sprite):
     def __init__(self, mouse_tile_x, mouse_tile_y, turret_data):
         super().__init__()
-        self.turret_data = turret_data
-        self.upgrade_level = 1
-        self.upgrade_max_level = self.turret_data.get('constants').get('levels')
-        self.base_image = None
-        self.original_base_image = None
+        # Position
         self.mouse_tile_x = mouse_tile_x
         self.mouse_tile_y = mouse_tile_y
-        self.selected = False
-        self.target = None
-        self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
-        self.sell_reward = self.turret_data.get('constants').get('sell_reward')
-        self.upgrade_costs = self.turret_data.get('constants').get('upgrade_cost')
-        self.gun_sound = None
-        self.gun_sound_played = False
-        self.original_image = None
-        self.image = None
-        self.rect = None
-        self.animation_list = []
-        self.base_image_rect = None
-
-        # Position
         self.x = (mouse_tile_x + 0.5) * c.TILE_SIZE
         self.y = (mouse_tile_y + 0.5) * c.TILE_SIZE
 
+        # General
+        self.upgrade_level = 1
+        self.selected = False
+        self.target = None
+
+        # Turret data
+        self.turret_data = turret_data
+        self.upgrade_max_level = self.turret_data.get('constants').get('levels')
+        self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
+        self.sell_reward = self.turret_data.get('constants').get('sell_reward')
+        self.upgrade_costs = self.turret_data.get('constants').get('upgrade_cost')
+
+        # Sound
+        self.gun_sound = None
+        self.gun_sound_played = False
+
+        # Image
+        self.original_image = None
+        self.base_image = None
+        self.original_base_image = None
+        self.image = None
+        self.rect = None
+        self.base_image_rect = None
+        self.sprite_sheets = []
+
         # Animation
+        self.animation_list = []
         self.frame_index = 0
         self.cooldown = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('cooldown')
         self.last_shot = pg.time.get_ticks()

@@ -28,10 +28,8 @@ class Game():
         # Load assets
         self.turret_std_cursor = pg.image.load(r'assets\shakers\Red\Weapons\weapon01.png').convert_alpha()
         self.turret_std_cursor = pg.transform.scale_by(self.turret_std_cursor, 0.8)
-
         self.turret_laser_cursor = pg.image.load(r'assets\shakers\Blue\Weapons\weapon01.png').convert_alpha()
         self.turret_laser_cursor = pg.transform.scale_by(self.turret_laser_cursor, 0.8)
-
         self.text_font = pg.font.SysFont('Consolas', 24, bold=True)
         self.large_font = pg.font.SysFont('Consolas', 36)
 
@@ -117,16 +115,7 @@ class Game():
                             self.last_enemy_spawn = pg.time.get_ticks()
 
                 if self.world.check_level_complete():
-                    self.world.level += 1
-                    if self.world.level <= c.TOTAL_LEVELS:
-                        self.world.money += c.LEVEL_COMPLETE_REWARD
-                        self.level_started = False
-                        self.last_enemy_spawn = pg.time.get_ticks()
-                        self.world.reset_level()
-                        self.world.process_enemies()
-                    else:
-                        self.game_over = True
-                        self.game_outcome = 1
+                    self.load_next_level()
 
                 # Draw buttons
                 if self.buy_std_gun_button.draw(self.screen):
@@ -169,6 +158,18 @@ class Game():
             pg.display.flip()
 
         pg.quit()
+
+    def load_next_level(self):
+        self.world.level += 1
+        if self.world.level <= c.TOTAL_LEVELS:
+            self.world.money += c.LEVEL_COMPLETE_REWARD
+            self.level_started = False
+            self.last_enemy_spawn = pg.time.get_ticks()
+            self.world.reset_level()
+            self.world.process_enemies()
+        else:
+            self.game_over = True
+            self.game_outcome = 1
 
     def handle_game_over(self):
         pg.draw.rect(self.screen, 'dodgerblue', (300, 300, 400, 200), border_radius=30)

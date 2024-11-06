@@ -1,5 +1,5 @@
 import pygame as pg
-from turrets.turret_data import TURRET_DATA_BASIC_GUN, TURRET_DATA_LASER_GUN
+from turrets.turret_data import *
 from turrets.turret import Turret
 
 class TurretFactory:
@@ -22,6 +22,15 @@ class TurretFactory:
         self.turret_laser_base = pg.transform.scale_by(self.turret_laser_base, 0.5)
         self.turret_laser_sound = pg.mixer.Sound(r'assets\sounds\laser_fire.wav')
 
+        # Load plasma turret assets
+        self.turret_plasma_sprite_sheets = []
+        for x in range(1, TURRET_DATA_PLASMA_GUN.get('constants').get('levels') + 1):
+            self.turret_sheet = pg.image.load(rf'assets\shakers\Purple\Weapons\turret_02_mk{x}.png').convert_alpha()
+            self.turret_plasma_sprite_sheets.append(self.turret_sheet)
+        self.turret_plasma_base = pg.image.load(r'assets\shakers\Purple\Towers\base.png').convert_alpha()
+        self.turret_plasma_base = pg.transform.scale_by(self.turret_plasma_base, 0.5)
+        self.turret_plasma_sound = pg.mixer.Sound(r'assets\sounds\laser_fire.wav')
+
     def create_turret(self, turret_type, x, y):
         new_turret = None
         if turret_type == "basic":
@@ -35,6 +44,12 @@ class TurretFactory:
             new_turret.sprite_sheets = self.turret_laser_sprite_sheets
             new_turret.base_image = self.turret_laser_base
             new_turret.gun_sound = self.turret_laser_sound
+
+        elif turret_type == "plasma":
+            new_turret = Turret(x, y, TURRET_DATA_PLASMA_GUN)
+            new_turret.sprite_sheets = self.turret_plasma_sprite_sheets
+            new_turret.base_image = self.turret_plasma_base
+            new_turret.gun_sound = self.turret_plasma_sound
         else:
             raise ValueError(f"Unknown turret type: {turret_type}")
 
@@ -55,5 +70,7 @@ class TurretFactory:
             return TURRET_DATA_BASIC_GUN.get('constants').get('buy_cost')
         if turret_type == "laser":
             return TURRET_DATA_LASER_GUN.get('constants').get('buy_cost')
+        if turret_type == "plasma":
+            return TURRET_DATA_PLASMA_GUN.get('constants').get('buy_cost')
 
         raise ValueError(f"Unknown turret type: {turret_type}")

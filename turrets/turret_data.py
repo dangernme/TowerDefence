@@ -71,3 +71,40 @@ TURRET_DATA_LASER_GUN = {
         }
     ]
 }
+
+TURRET_DATA_PLASMA_GUN = {
+    'constants': {
+        'animation_steps': 11,
+        'buy_cost': 400,
+        'upgrade_cost': 250,
+        'sell_reward': 100,
+        'levels': 4
+    },
+    'turret_data':
+    [
+        {
+            #1
+            'range' : 250,
+            'cooldown' : 600,
+            'damage': 20
+        },
+        {
+            #2
+            'range' : 270,
+            'cooldown' : 400,
+            'damage': 30
+        },
+        {
+            #3
+            'range' : 300,
+            'cooldown' : 150,
+            'damage': 40
+        },
+        {
+            #4
+            'range' : 320,
+            'cooldown' : 30,
+            'damage': 50
+        }
+    ]
+}

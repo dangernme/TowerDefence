@@ -15,6 +15,7 @@ class Turret(pg.sprite.Sprite):
         self.upgrade_level = 1
         self.selected = False
         self.target = None
+        self.target_selection = 'first'
 
         # Turret data
         self.turret_data = turret_data
@@ -57,7 +58,12 @@ class Turret(pg.sprite.Sprite):
             self.play_animation()
         else:
             if pg.time.get_ticks() - self.last_shot > (self.cooldown / world.game_speed):
-                self.pick_target(enemy_group)
+                if self.target_selection == 'nearest':
+                    self.pick_target(enemy_group)
+                elif self.target_selection == 'strongest':
+                    self.pick_strongest_target(enemy_group)
+                elif self.target_selection == 'first':
+                    self.pick_first_target(enemy_group)
 
     def pick_target(self, enemy_group):
         x_dist = 0
@@ -72,6 +78,43 @@ class Turret(pg.sprite.Sprite):
                     self.angle = math.degrees(math.atan2(-y_dist, x_dist))
                     self.target.health -= self.damage
                     break
+
+    def pick_first_target(self, enemy_group):
+        highest_waypoint_enemy = None
+        for enemy in enemy_group:
+            if enemy.health > 0:
+                x_dist = enemy.pos[0] - self.x
+                y_dist = enemy.pos[1] - self.y
+                dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
+                if dist < self.range:
+                    if not highest_waypoint_enemy:
+                        highest_waypoint_enemy = enemy
+                    elif enemy.target_waypoint > highest_waypoint_enemy.target_waypoint:
+                        highest_waypoint_enemy = enemy
+
+        if highest_waypoint_enemy:
+            self.target = highest_waypoint_enemy
+            self.angle = math.degrees(math.atan2(-y_dist, x_dist))
+            self.target.health -= self.damage
+
+    def pick_strongest_target(self, enemy_group):
+        strongest_enemy = None
+        for enemy in enemy_group:
+            if enemy.health > 0:
+                x_dist = enemy.pos[0] - self.x
+                y_dist = enemy.pos[1] - self.y
+                dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
+                if dist < self.range:
+                    if not strongest_enemy:
+                        strongest_enemy = enemy
+                    elif enemy.health > strongest_enemy.health:
+                        strongest_enemy = enemy
+
+        if strongest_enemy:
+            self.target = strongest_enemy
+            self.angle = math.degrees(math.atan2(-y_dist, x_dist))
+            self.target.health -= self.damage
+
 
     def play_animation(self):
         self.original_image = self.animation_list[self.frame_index]

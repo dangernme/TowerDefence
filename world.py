@@ -1,14 +1,11 @@
-import json
 import random
-import pygame as pg
 from enemies.enemy_data import ENEMY_SPAWN_DATA
 import constants as c
 
 class World:
-    def __init__(self):
-        self.image = pg.image.load(r'assets\levels\level_01.png').convert_alpha()
-        with open('assets/levels/level_01.tmj', 'r', encoding='utf-8') as file:
-            self.level_data = json.load(file)
+    def __init__(self, image, level_data):
+        self.image = image
+        self.level_data = level_data
         self.waypoints = []
         self.level = 1
         self.health = c.HEALTH

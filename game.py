@@ -1,3 +1,4 @@
+import json
 import pygame as pg
 from enemies.enemy_factory import EnemyFactory
 from world import World
@@ -16,6 +17,7 @@ class Game():
 
         # Game variables
         self.run = True
+        self.world_number = 0
         self.placing_turret = False
         self.selected_turret = None
         self.level_started = False
@@ -42,20 +44,31 @@ class Game():
         # Sprite setup
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
-        self.start_button = Button(c.SCREEN_WIDTH + 130, 20, 'START', 'green', 'black', True)
-        self.buy_basic_gun_button = Button(c.SCREEN_WIDTH + 70, 80, f'BASIC GUN ${self.turret_factory.get_turret_costs('basic')}', 'white', 'red', True)
-        self.buy_laser_gun_button = Button(c.SCREEN_WIDTH + 70, 130, f'LASER GUN ${self.turret_factory.get_turret_costs('laser')}', 'white', 'blue', True)
-        self.buy_plasma_gun_button = Button(c.SCREEN_WIDTH + 70, 180, f'PLASMA GUN ${self.turret_factory.get_turret_costs('plasma')}', 'white', 'purple', True)
-        self.cancel_button = Button(c.SCREEN_WIDTH + 70, 230, 'CANCEL', 'white', 'red', True)
-        self.upgrade_button = Button(c.SCREEN_WIDTH + 70, 280, 'UPGRADE', 'orange', 'black', True)
-        self.first_target_button = Button(c.SCREEN_WIDTH + 70, 330, 'FIRST TARGET', 'black', 'blue', True)
-        self.nearest_target_button = Button(c.SCREEN_WIDTH + 70, 380, 'NEAR TARGET', 'black', 'green', True)
-        self.strongest_target_button = Button(c.SCREEN_WIDTH + 70, 430, 'STRONG TARGET', 'black', 'green', True)
-        self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 480, 'FAST', 'red', 'blue', False)
+        self.start_button = Button(c.SCREEN_WIDTH + 130, 30, 'START', 'green', 'black', True)
+        self.buy_basic_gun_button = Button(c.SCREEN_WIDTH + 70, 100, f'BASIC GUN ${self.turret_factory.get_turret_costs('basic')}', 'white', 'red', True)
+        self.buy_laser_gun_button = Button(c.SCREEN_WIDTH + 70, 150, f'LASER GUN ${self.turret_factory.get_turret_costs('laser')}', 'white', 'blue', True)
+        self.buy_plasma_gun_button = Button(c.SCREEN_WIDTH + 70, 200, f'PLASMA GUN ${self.turret_factory.get_turret_costs('plasma')}', 'white', 'purple', True)
+        self.cancel_button = Button(c.SCREEN_WIDTH + 70, 250, 'CANCEL', 'white', 'red', True)
+        self.upgrade_button = Button(c.SCREEN_WIDTH + 70, 300, 'UPGRADE', 'orange', 'black', True)
+        self.first_target_button = Button(c.SCREEN_WIDTH + 70, 350, 'FIRST TARGET', 'black', 'blue', True)
+        self.nearest_target_button = Button(c.SCREEN_WIDTH + 70, 400, 'NEAR TARGET', 'black', 'green', True)
+        self.strongest_target_button = Button(c.SCREEN_WIDTH + 70, 450, 'STRONG TARGET', 'black', 'green', True)
+        self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 500, 'FAST', 'red', 'blue', False)
         self.sell_turret_button = Button(c.SCREEN_WIDTH + 70, 800, 'SELL TURRET', 'red', 'black', True)
         self.restart_button = Button(410, 400, 'RESTART', 'black', 'red', True)
 
-        self.world = World()
+        # World setup
+        self.world_images = []
+        self.world_data_files = []
+
+        for world_num in range(1, c.TOTAL_WORLDS + 1):
+            world_image_path = f'assets/worlds/world_{world_num:02}.png'
+            world_data_path = f'assets/worlds/world_{world_num:02}.tmj'
+            self.world_images.append(pg.image.load(world_image_path).convert_alpha())
+            with open(world_data_path, 'r', encoding='utf-8') as file:
+                self.world_data_files.append(json.load(file))
+
+        self.world = World(self.world_images[self.world_number], self.world_data_files[self.world_number])
         self.world.process_data()
         self.world.process_enemies()
 
@@ -91,6 +104,7 @@ class Game():
                 self.draw_text(f'\u2665 {self.world.health}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 10))
                 self.draw_text(f'$ {self.world.money}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 30))
                 self.draw_text(f'L {self.world.level}/{c.TOTAL_LEVELS}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 50))
+                self.draw_text(f'W {self.world_number + 1}/{c.TOTAL_WORLDS}', self.text_font, 'white', (c.SCREEN_WIDTH + 30, 70))
 
                 for turret in self.turret_group:
                     turret.draw(self.screen)
@@ -200,6 +214,19 @@ class Game():
             self.world.reset_level()
             self.world.process_enemies()
         else:
+            self.load_next_world()
+
+    def load_next_world(self):
+        self.world_number += 1
+        if self.world_number < c.TOTAL_WORLDS:
+            self.world = World(self.world_images[self.world_number], self.world_data_files[self.world_number])
+            self.world.process_data()
+            self.world.process_enemies()
+            self.enemy_group.empty()
+            self.turret_group.empty()
+            self.level_started = False
+            self.last_enemy_spawn = pg.time.get_ticks()
+        else:
             self.game_over = True
             self.game_outcome = 1
 
@@ -214,12 +241,13 @@ class Game():
             self.restart()
 
     def restart(self):
+        self.world_number = 0
         self.game_over = False
         self.level_started = False
         self.placing_turret = False
         self.selected_turret = None
         self.last_enemy_spawn = pg.time.get_ticks()
-        self.world = World()
+        self.world = World(self.world_images[self.world_number], self.world_data_files[self.world_number])
         self.world.process_data()
         self.world.process_enemies()
         self.enemy_group.empty()

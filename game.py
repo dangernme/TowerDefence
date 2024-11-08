@@ -44,7 +44,6 @@ class Game():
         # Sprite setup
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
-        self.start_button = Button(c.SCREEN_WIDTH + 130, 30, 'START', 'green', 'black', True)
         self.buy_basic_gun_button = Button(c.SCREEN_WIDTH + 70, 100, f'BASIC GUN ${self.turret_factory.get_turret_costs('basic')}', 'white', 'red', True)
         self.buy_laser_gun_button = Button(c.SCREEN_WIDTH + 70, 150, f'LASER GUN ${self.turret_factory.get_turret_costs('laser')}', 'white', 'blue', True)
         self.buy_plasma_gun_button = Button(c.SCREEN_WIDTH + 70, 200, f'PLASMA GUN ${self.turret_factory.get_turret_costs('plasma')}', 'white', 'purple', True)
@@ -55,6 +54,7 @@ class Game():
         self.strongest_target_button = Button(c.SCREEN_WIDTH + 70, 450, 'STRONG TARGET', 'black', 'green', True)
         self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 500, 'FAST', 'red', 'blue', False)
         self.sell_turret_button = Button(c.SCREEN_WIDTH + 70, 800, 'SELL TURRET', 'red', 'black', True)
+        self.start_button = Button(c.SCREEN_WIDTH + 70, 850, 'START', 'green', 'black', True)
         self.restart_button = Button(410, 400, 'RESTART', 'black', 'red', True)
 
         # World setup

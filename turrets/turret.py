@@ -59,46 +59,67 @@ class Turret(pg.sprite.Sprite):
         else:
             if pg.time.get_ticks() - self.last_shot > (self.cooldown / world.game_speed):
                 if self.target_selection == 'nearest':
-                    self.pick_target(enemy_group)
+                    self.pick_nearest_target(enemy_group)
                 elif self.target_selection == 'strongest':
                     self.pick_strongest_target(enemy_group)
                 elif self.target_selection == 'first':
                     self.pick_first_target(enemy_group)
 
-    def pick_target(self, enemy_group):
-        x_dist = 0
-        y_dist = 0
+    def pick_nearest_target(self, enemy_group):
+        nearest_enemy = None
+        target_dist_x = 0
+        target_dist_y = 0
         for enemy in enemy_group:
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
                 y_dist = enemy.pos[1] - self.y
                 dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
                 if dist < self.range:
-                    self.target = enemy
-                    self.angle = math.degrees(math.atan2(-y_dist, x_dist))
-                    self.target.health -= self.damage
-                    break
+                    if not nearest_enemy:
+                        nearest_enemy = enemy
+                        target_dist_x = x_dist
+                        target_dist_y = y_dist
+                    elif dist < math.sqrt((nearest_enemy.pos[0] - self.x) ** 2 + (nearest_enemy.pos[1] - self.y) ** 2):
+                        nearest_enemy = enemy
+                        target_dist_x = x_dist
+                        target_dist_y = y_dist
+
+        if nearest_enemy:
+            self.target = nearest_enemy
+            self.angle = math.degrees(math.atan2(-target_dist_y, target_dist_x))
+            self.target.health -= self.damage
 
     def pick_first_target(self, enemy_group):
-        highest_waypoint_enemy = None
+        first_enemy = None
+        target_dist_x = 0
+        target_dist_y = 0
         for enemy in enemy_group:
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
                 y_dist = enemy.pos[1] - self.y
                 dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
                 if dist < self.range:
-                    if not highest_waypoint_enemy:
-                        highest_waypoint_enemy = enemy
-                    elif enemy.target_waypoint > highest_waypoint_enemy.target_waypoint:
-                        highest_waypoint_enemy = enemy
+                    enemy_progress = (pg.time.get_ticks() - enemy.start_time) * enemy.speed
+                    if not first_enemy:
+                        first_enemy = enemy
+                        target_dist_x = x_dist
+                        target_dist_y = y_dist
+                        target_progress = (pg.time.get_ticks() - first_enemy.start_time) * first_enemy.speed
+                    elif enemy_progress > target_progress:
+                        first_enemy = enemy
+                        target_dist_x = x_dist
+                        target_dist_y = y_dist
+                        target_progress = (pg.time.get_ticks() - first_enemy.start_time) * first_enemy.speed
 
-        if highest_waypoint_enemy:
-            self.target = highest_waypoint_enemy
-            self.angle = math.degrees(math.atan2(-y_dist, x_dist))
+        if first_enemy:
+            self.target = first_enemy
+            self.angle = math.degrees(math.atan2(-target_dist_y, target_dist_x))
             self.target.health -= self.damage
 
     def pick_strongest_target(self, enemy_group):
         strongest_enemy = None
+        target_dist_x = 0
+        target_dist_y = 0
         for enemy in enemy_group:
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
@@ -107,12 +128,16 @@ class Turret(pg.sprite.Sprite):
                 if dist < self.range:
                     if not strongest_enemy:
                         strongest_enemy = enemy
+                        target_dist_x = x_dist
+                        target_dist_y = y_dist
                     elif enemy.health > strongest_enemy.health:
                         strongest_enemy = enemy
+                        target_dist_x = x_dist
+                        target_dist_y = y_dist
 
         if strongest_enemy:
             self.target = strongest_enemy
-            self.angle = math.degrees(math.atan2(-y_dist, x_dist))
+            self.angle = math.degrees(math.atan2(-target_dist_y, target_dist_x))
             self.target.health -= self.damage
 
 

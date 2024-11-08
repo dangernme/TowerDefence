@@ -53,9 +53,9 @@ class Game():
         self.first_target_button = Button(c.SCREEN_WIDTH + 70, 350, 'FIRST TARGET', 'black', 'blue', True)
         self.nearest_target_button = Button(c.SCREEN_WIDTH + 70, 400, 'NEAR TARGET', 'black', 'green', True)
         self.strongest_target_button = Button(c.SCREEN_WIDTH + 70, 450, 'STRONG TARGET', 'black', 'green', True)
-        self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 500, 'FAST', 'red', 'blue', False)
         self.sell_turret_button = Button(c.SCREEN_WIDTH + 70, 700, 'SELL TURRET', 'red', 'black', True)
         self.confirm_sell_turret_button = Button(c.SCREEN_WIDTH + 70, 750, 'CONFIRM', 'red', 'black', True)
+        self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 850, 'FAST', 'red', 'blue', False)
         self.start_button = Button(c.SCREEN_WIDTH + 70, 900, 'START', 'green', 'black', True)
         self.restart_button = Button(410, 400, 'RESTART', 'black', 'red', True)
 

@@ -178,6 +178,7 @@ class Turret(pg.sprite.Sprite):
         self.range = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('range')
         self.cooldown = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('cooldown')
         self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
+        self.sell_reward = math.ceil(self.sell_reward * self.upgrade_level * 0.6)
 
         # Upgrade range circle
         self.range = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('range')

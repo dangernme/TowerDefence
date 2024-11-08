@@ -23,6 +23,7 @@ class Game():
         self.level_started = False
         self.game_over = False
         self.game_outcome = 0
+        self.confirm_sell = False
         self.turret_type = None
         self.turret_cursor = None
         self.turret_factory = TurretFactory()
@@ -53,8 +54,9 @@ class Game():
         self.nearest_target_button = Button(c.SCREEN_WIDTH + 70, 400, 'NEAR TARGET', 'black', 'green', True)
         self.strongest_target_button = Button(c.SCREEN_WIDTH + 70, 450, 'STRONG TARGET', 'black', 'green', True)
         self.fast_forward_button = Button(c.SCREEN_WIDTH + 70, 500, 'FAST', 'red', 'blue', False)
-        self.sell_turret_button = Button(c.SCREEN_WIDTH + 70, 800, 'SELL TURRET', 'red', 'black', True)
-        self.start_button = Button(c.SCREEN_WIDTH + 70, 850, 'START', 'green', 'black', True)
+        self.sell_turret_button = Button(c.SCREEN_WIDTH + 70, 700, 'SELL TURRET', 'red', 'black', True)
+        self.confirm_sell_turret_button = Button(c.SCREEN_WIDTH + 70, 750, 'CONFIRM', 'red', 'black', True)
+        self.start_button = Button(c.SCREEN_WIDTH + 70, 900, 'START', 'green', 'black', True)
         self.restart_button = Button(410, 400, 'RESTART', 'black', 'red', True)
 
         # World setup
@@ -191,10 +193,16 @@ class Game():
                         self.nearest_target_button.background_color = 'green'
                         self.strongest_target_button.background_color = 'blue'
 
+                    self.sell_turret_button.text = f'SELL TURRET ${self.selected_turret.sell_reward}'
                     if self.sell_turret_button.draw(self.screen):
-                        self.world.money += self.selected_turret.sell_reward * self.selected_turret.upgrade_level
-                        self.selected_turret.kill()
-                        self.selected_turret = None
+                        self.confirm_sell = True
+
+                    if self.confirm_sell:
+                        if self.confirm_sell_turret_button.draw(self.screen):
+                            self.world.money += self.selected_turret.sell_reward
+                            self.selected_turret.kill()
+                            self.confirm_sell = False
+                            self.clear_selection()
 
             else:
                 self.handle_game_over()
@@ -283,14 +291,12 @@ class Game():
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
                 if self.selected_turret:
                     self.clear_selection()
-                    self.selected_turret = None
                 if self.placing_turret:
                     self.placing_turret = False
                     self.turret_cursor = None
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pg.mouse.get_pos()
                 if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
-                    self.selected_turret = None
                     self.clear_selection()
                     if self.placing_turret:
                         if self.world.money >= self.turret_factory.get_turret_costs(self.turret_type):
@@ -302,3 +308,5 @@ class Game():
     def clear_selection(self):
         for turret in self.turret_group:
             turret.selected = False
+        self.selected_turret = None
+        self.confirm_sell = False

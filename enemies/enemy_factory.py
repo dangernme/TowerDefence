@@ -12,7 +12,7 @@ class EnemyFactory:
         self.plane_strong_enemy_image = pg.image.load(r'assets\tiles\PNG\Default size\towerDefense_tile271.png').convert_alpha()
 
     def create_enemy(self, enemy_type, waypoints):
-        new_enemy = Enemy(waypoints, ENEMY_DATA.get(enemy_type))
+        new_enemy = Enemy(waypoints, ENEMY_DATA.get(enemy_type), enemy_type)
 
         if enemy_type == 'weak':
             new_enemy.original_image = self.weak_enemy_image

@@ -265,7 +265,7 @@ class Game():
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
         mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
         mouse_tile_num = (mouse_tile_y * c.COLS) + mouse_tile_x
-        if self.world.tile_map[mouse_tile_num] == 25:
+        if self.world.tile_map[mouse_tile_num] in [25, 93, 95, 96, 97, 70, 71, 116, 117, 74, 73, 118, 168]:
             space_is_free = True
             for turret in self.turret_group:
                 if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):

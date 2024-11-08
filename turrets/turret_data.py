@@ -1,8 +1,9 @@
 TURRET_DATA_BASIC_GUN = {
     'constants': {
+        'name': 'basic',
         'animation_steps': 8,
         'buy_cost': 150,
-        'upgrade_cost': 100,
+        'upgrade_cost': 80,
         'sell_reward': 50,
         'levels': 4
     },
@@ -12,31 +13,32 @@ TURRET_DATA_BASIC_GUN = {
             #1
             'range' : 120,
             'cooldown' : 1500,
-            'damage': 5
+            'damage': 10
         },
         {
             #2
-            'range' : 140,
+            'range' : 130,
             'cooldown' : 1100,
-            'damage': 8
+            'damage': 18
         },
         {
             #3
-            'range' : 160,
+            'range' : 150,
             'cooldown' : 900,
-            'damage': 12
+            'damage': 27
         },
         {
             #4
-            'range' : 180,
-            'cooldown' : 200,
-            'damage': 17
+            'range' : 170,
+            'cooldown' : 300,
+            'damage': 30
         }
     ]
 }
 
 TURRET_DATA_LASER_GUN = {
     'constants': {
+        'name': 'laser',
         'animation_steps': 11,
         'buy_cost': 200,
         'upgrade_cost': 120,
@@ -74,6 +76,7 @@ TURRET_DATA_LASER_GUN = {
 
 TURRET_DATA_PLASMA_GUN = {
     'constants': {
+        'name': 'plasma',
         'animation_steps': 11,
         'buy_cost': 400,
         'upgrade_cost': 250,

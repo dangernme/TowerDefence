@@ -3,11 +3,12 @@ import pygame as pg
 from pygame.math import Vector2
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, waypoints, enemy_data):
+    def __init__(self, waypoints, enemy_data, enemy_type):
         super().__init__()
         self.enemy_data = enemy_data
         self.angle = 0
         self.start_time = pg.time.get_ticks()
+        self.enemy_type = enemy_type
         self.speed = self.enemy_data.get('speed')
         self.health = self.enemy_data.get('health')
         self.reward = self.enemy_data.get('reward')

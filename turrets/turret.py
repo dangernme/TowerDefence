@@ -19,6 +19,7 @@ class Turret(pg.sprite.Sprite):
 
         # Turret data
         self.turret_data = turret_data
+        self.turret_type = self.turret_data.get('constants').get('name')
         self.upgrade_max_level = self.turret_data.get('constants').get('levels')
         self.damage = self.turret_data.get('turret_data')[self.upgrade_level - 1].get('damage')
         self.sell_reward = self.turret_data.get('constants').get('sell_reward')
@@ -70,6 +71,8 @@ class Turret(pg.sprite.Sprite):
         target_dist_x = 0
         target_dist_y = 0
         for enemy in enemy_group:
+            if self.turret_name == 'basic' and enemy.type == 'plane':
+                continue
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
                 y_dist = enemy.pos[1] - self.y
@@ -94,6 +97,8 @@ class Turret(pg.sprite.Sprite):
         target_dist_x = 0
         target_dist_y = 0
         for enemy in enemy_group:
+            if self.turret_type == 'basic' and enemy.enemy_type in ['plane_weak', 'plane_strong']:
+                continue
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
                 y_dist = enemy.pos[1] - self.y
@@ -121,6 +126,8 @@ class Turret(pg.sprite.Sprite):
         target_dist_x = 0
         target_dist_y = 0
         for enemy in enemy_group:
+            if self.turret_name == 'basic' and enemy.type == 'plane':
+                continue
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
                 y_dist = enemy.pos[1] - self.y

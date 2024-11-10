@@ -3,6 +3,7 @@ import pygame as pg
 from enemies.enemy_factory import EnemyFactory
 from world import World
 from button import Button
+from world_button import WorldButton
 from turrets.turret_factory import TurretFactory
 import constants as c
 
@@ -62,15 +63,9 @@ class Game():
         # World selection setup
         self.world_selection = True
         self.world_number = 0
-        self.world_selection_list = []
-        world_01_button = Button(0, 0, '0', 'black', 'gray', True)
-        world_02_button = Button(0, 0, '0', 'black', 'gray', True)
-        world_03_button = Button(0, 0, '0', 'black', 'gray', True)
-        world_04_button = Button(0, 0, '0', 'black', 'gray', True)
-        self.world_selection_list.append(world_01_button)
-        self.world_selection_list.append(world_02_button)
-        self.world_selection_list.append(world_03_button)
-        self.world_selection_list.append(world_04_button)
+        self.world_buttons = []
+        for _ in range(c.TOTAL_WORLDS):
+            self.world_buttons.append(WorldButton())
 
         # World setup
         self.world_images = []
@@ -95,21 +90,17 @@ class Game():
 
             if self.world_selection:
                 self.screen.fill('black')
-                self.draw_text('SELECT WORLD', self.large_font, 'white', (410, 320))
+                self.draw_text('SELECT WORLD', self.large_font, 'white', (500, 20))
                 for i in range(c.TOTAL_WORLDS):
-                    if i == self.world_number:
-                        color = 'green'
-                    else:
-                        color = 'red'
-                    self.world_selection_list[i].rect = pg.Rect(410, 400 + (i * 50), 200, 40)
-                    self.world_selection_list[i].text = f'WORLD {i + 1}'
-                    self.world_selection_list[i].background_color = color
-                    if self.world_selection_list[i].draw(self.screen):
+                    self.world_buttons[i].reinit(95 + (i * 300), 100, self.world_images[i])
+                    if self.world_buttons[i].draw(self.screen):
+                        print('action')
                         self.world_number = i
                         self.world = World(self.world_images[self.world_number], self.world_data_files[self.world_number])
                         self.world.process_data()
                         self.world.process_enemies()
                         self.world_selection = False
+                        break
             else:
 
                 if not self.game_over:

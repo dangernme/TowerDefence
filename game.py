@@ -234,11 +234,15 @@ class Game():
 
     def load_next_level(self):
         self.world.level += 1
-        self.world.money += c.LEVEL_COMPLETE_REWARD
-        self.level_started = False
-        self.last_enemy_spawn = pg.time.get_ticks()
-        self.world.reset_level()
-        self.world.process_enemies()
+        if self.world.level <= c.TOTAL_LEVELS:
+            self.world.money += c.LEVEL_COMPLETE_REWARD
+            self.level_started = False
+            self.last_enemy_spawn = pg.time.get_ticks()
+            self.world.reset_level()
+            self.world.process_enemies()
+        else:
+            self.game_over = True
+            self.game_outcome = 1
 
     def handle_game_over(self):
         pg.draw.rect(self.screen, 'dodgerblue', (300, 300, 400, 200), border_radius=30)

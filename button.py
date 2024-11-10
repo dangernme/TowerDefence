@@ -12,6 +12,7 @@ class Button():
         self.font = pg.font.Font(None, 30)
         self.text_surf = self.font.render(self.text, True, self.text_color)
         self.text_rect = self.text_surf.get_rect(center=self.rect.center)
+        self.pressed = False
 
     def draw(self, surface):
         self.text_surf = self.font.render(self.text, True, self.text_color)
@@ -19,14 +20,16 @@ class Button():
         action = False
         pos = pg.mouse.get_pos()
 
-        if self.rect.collidepoint(pos):
-            if pg.mouse.get_pressed()[0] and self.clicked is False:
+        if self.single_click and self.rect.collidepoint(pos):
+            if pg.mouse.get_pressed()[0] and self.pressed is False:
+                self.pressed = True
+            elif not pg.mouse.get_pressed()[0] and self.pressed:
                 action = True
-                if self.single_click:
-                    self.clicked = True
+                self.pressed = False
 
-        if not pg.mouse.get_pressed()[0]:
-            self.clicked = False
+        elif not self.single_click and self.rect.collidepoint(pos):
+            if pg.mouse.get_pressed()[0]:
+                action = True
 
         pg.draw.rect(surface, self.background_color, self.rect, border_radius=10)
         surface.blit(self.text_surf, self.text_rect)

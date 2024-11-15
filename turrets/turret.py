@@ -71,7 +71,7 @@ class Turret(pg.sprite.Sprite):
         target_dist_x = 0
         target_dist_y = 0
         for enemy in enemy_group:
-            if self.turret_type == 'basic' and enemy.type == 'plane':
+            if self.turret_type == 'basic' and enemy.enemy_type == 'plane':
                 continue
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
@@ -126,7 +126,7 @@ class Turret(pg.sprite.Sprite):
         target_dist_x = 0
         target_dist_y = 0
         for enemy in enemy_group:
-            if self.turret_type == 'basic' and enemy.type == 'plane':
+            if self.turret_type == 'basic' and enemy.enemy_type == 'plane':
                 continue
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x

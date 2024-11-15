@@ -156,32 +156,32 @@ ENEMY_SPAWN_DATA = [
 
 ENEMY_DATA = {
         'weak': {
-        'reward': 4,
+        'reward': 3,
         'health': 10,
         'speed': 2
     },
         'medium': {
-        'reward': 6,
+        'reward': 4,
         'health': 20,
         'speed': 4
     },
         'strong': {
-        'reward': 8,
+        'reward': 6,
         'health': 40,
         'speed': 5
     },
         'elite': {
-        'reward': 10,
+        'reward': 7,
         'health': 50,
         'speed': 7
     },
         'plane_weak': {
-        'reward': 11,
+        'reward': 8,
         'health': 60,
         'speed': 7
     },
         'plane_strong': {
-        'reward': 12,
+        'reward': 9,
         'health': 80,
         'speed': 8
     }

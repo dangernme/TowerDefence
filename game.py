@@ -92,7 +92,7 @@ class Game():
                 self.screen.fill('black')
                 self.draw_text('SELECT WORLD', self.large_font, 'white', (500, 20))
                 for i in range(c.TOTAL_WORLDS):
-                    self.world_buttons[i].reinit(95 + (i * 300), 100, self.world_images[i])
+                    self.world_buttons[i].reinit(50 + (i * 250), 100, self.world_images[i])
                     if self.world_buttons[i].draw(self.screen):
                         print('action')
                         self.world_number = i
@@ -105,6 +105,7 @@ class Game():
 
                 if not self.game_over:
                     if self.world.health <= 0:
+                        self.world.health = 0
                         self.game_over = True
                         self.game_outcome = -1
 
@@ -269,7 +270,7 @@ class Game():
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
         mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
         mouse_tile_num = (mouse_tile_y * c.COLS) + mouse_tile_x
-        if self.world.tile_map[mouse_tile_num] in [25, 93, 95, 96, 97, 70, 71, 116, 117, 74, 73, 118, 168]:
+        if self.world.tile_map[mouse_tile_num] in c.BUILDABLE_TILES:
             space_is_free = True
             for turret in self.turret_group:
                 if (mouse_tile_x, mouse_tile_y) == (turret.mouse_tile_x, turret.mouse_tile_y):

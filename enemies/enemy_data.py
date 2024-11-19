@@ -151,6 +151,69 @@ ENEMY_SPAWN_DATA = [
         'elite': 0,
         'plane_weak': 40,
         'plane_strong': 35
+    },
+    {
+        #18
+        'weak': 5,
+        'medium': 5,
+        'strong': 5,
+        'elite': 5,
+        'plane_weak': 40,
+        'plane_strong': 35
+    },
+    {
+        #19
+        'weak': 15,
+        'medium': 15,
+        'strong': 15,
+        'elite': 15,
+        'plane_weak': 40,
+        'plane_strong': 35
+    },
+    {
+        #20
+        'weak': 25,
+        'medium': 25,
+        'strong': 25,
+        'elite': 25,
+        'plane_weak': 40,
+        'plane_strong': 35
+    },
+    {
+        #21
+        'weak': 35,
+        'medium': 35,
+        'strong': 35,
+        'elite': 35,
+        'plane_weak': 40,
+        'plane_strong': 35
+    },
+    {
+        #22
+        'weak': 45,
+        'medium': 45,
+        'strong': 45,
+        'elite': 45,
+        'plane_weak': 40,
+        'plane_strong': 35
+    },
+    {
+        #23
+        'weak': 55,
+        'medium': 55,
+        'strong': 55,
+        'elite': 55,
+        'plane_weak': 40,
+        'plane_strong': 35
+    },
+    {
+        #24
+        'weak': 65,
+        'medium': 65,
+        'strong': 65,
+        'elite': 65,
+        'plane_weak': 40,
+        'plane_strong': 35
     }
 ]
 
